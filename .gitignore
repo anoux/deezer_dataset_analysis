@@ -1,0 +1,11 @@
+# Ignore large files
+*.torrent
+**/*.7z
+*.torrent
+*.csv
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+deezerdb.duckdb
