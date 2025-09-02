@@ -3,9 +3,11 @@
 **/*.7z
 *.torrent
 *.csv
+deezerdb.duckdb
+
 # Ignore Python cache files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-deezerdb.duckdb
+
