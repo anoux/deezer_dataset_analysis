@@ -1,0 +1,20 @@
+!SESSION 2025-09-03 08:22:44.014 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=21.0.5
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en
+Framework arguments:  -eclipse.keyring /Users/anx/Library/DBeaverData/secure/secure_storage
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -data /Users/anx/Documents/deezer_analysis -eclipse.keyring /Users/anx/Library/DBeaverData/secure/secure_storage
+
+!ENTRY org.eclipse.ui 2 2 2025-09-03 08:22:46.169
+!MESSAGE Invalid preference category path: org.eclipse.debug.ui.ConsolePreferencePage (bundle: org.eclipse.ui.console, page: org.eclipse.ui.internal.console.ansi.preferences.AnsiConsolePreferencePage)
+!SESSION 2025-09-03 08:23:14.195 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=21.0.5
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en
+Framework arguments:  -eclipse.keyring /Users/anx/Library/DBeaverData/secure/secure_storage
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -data /Users/anx/Documents/deezer_analysis -eclipse.keyring /Users/anx/Library/DBeaverData/secure/secure_storage
+
+!ENTRY org.eclipse.ui 2 2 2025-09-03 08:23:21.350
+!MESSAGE Invalid preference category path: org.eclipse.debug.ui.ConsolePreferencePage (bundle: org.eclipse.ui.console, page: org.eclipse.ui.internal.console.ansi.preferences.AnsiConsolePreferencePage)

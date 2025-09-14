@@ -3,11 +3,11 @@ import streamlit as st
 import pandas as pd
 
 # Connect to DuckDB
-con = duckdb.connect("deezerdb.duckdb")
+con = duckdb.connect("deezer.db")
 
 st.title("🎶 Deezer Music Dashboard")
 
-# KPIs
+# KPI
 kpi = con.execute("""
     SELECT 
         COUNT(DISTINCT ArtistId) AS artists,

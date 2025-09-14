@@ -49,43 +49,4 @@ while not h.is_seed():
           f"{s.upload_rate / 1000:.1f} kB/s up, "
           f"{s.num_peers} peers")
     time.sleep(2)
-
-print("Download finished!")
-# /Users/anx/Documents/deezer_analysis/downloads/MusicBrainz Tidal Spotify Deezer Dataset 06 July 2025/CSV Datasets.7z
-
-
-
-
-
-
-
-'''
-# Step 2: Extract file info
-file_info = []
-extensions = []
-
-for f in files:
-    path_parts = [p.decode() for p in f[b'path']]
-    file_path = Path(*path_parts)
-    size = f.get(b'length', 0)
-    file_info.append({"file": str(file_path), "size": size})
-    extensions.append(file_path.suffix.lower())
-
-# Step 3: Basic analysis
-total_files = len(file_info)
-total_size = sum(f['size'] for f in file_info)
-file_type_counts = Counter(extensions)
-
-# Step 4: Print results
-print(f"Total files: {total_files}")
-print(f"Total size: {total_size / (1024**2):.2f} MB")
-print("File types and counts:")
-for ext, count in file_type_counts.items():
-    print(f"  {ext or '[no extension]'}: {count}")
-
-# Step 5: List files in 7z archive
-archive_path = "dataset.7z"
-with py7zr.SevenZipFile(archive_path, mode='r') as archive:
-    file_list = archive.getnames()
-    print(file_list)
-    '''
+    
