@@ -3,7 +3,7 @@
 **/*.7z
 *.torrent
 *.csv
-deezer.db
+*.db
 *.metadata
 
 # Ignore Python cache files

@@ -12,9 +12,12 @@ kpi = con.execute("""
     SELECT 
         COUNT(DISTINCT ArtistId) AS artists,
         COUNT(DISTINCT AlbumId) AS albums,
-        COUNT(DISTINCT TrackTitle) AS tracks,
-        AVG(EXTRACT(EPOCH FROM TrackDuration)) AS avg_duration
+        COUNT(DISTINCT TrackTitle) AS tracks, 
+        AVG(
+            EXTRACT(EPOCH FROM strptime(TrackDuration, '%H:%M:%S'))
+        ) AS avg_duration_seconds
     FROM deezer_table
+    WHERE TrackDuration IS NOT NULL;
 """).df().iloc[0]
 
 st.metric("Artists", kpi["artists"])
