@@ -6,23 +6,19 @@ This **[[Dataset](https://github.com/MusicMoveArr/Datasets)]** seemed to be quit
 ## Steps I went through
 1. Parsed a **[[torrent](https://github.com/MusicMoveArr/Datasets/blob/main/MusicBrainz%20Tidal%20Spotify%20Deezer%20Dataset%2006%20July%202025.torrent)]** containing deezer music dataset and extracted deezer dataset into a CSV file.
 2. Due to csv size, used **[DuckDB](https://duckdb.org/)** right on the terminal to query and analyze the csv file with SQL:
-   - First I created a database file by `code` con = duckdb.connect("deezer.db") `code`
+   - First I created a database file by ` con = duckdb.connect("deezer.db") `
    - As datatypes infere was giving several errors, I created an empty table and defined all headers and datatypes in advance (see table_headers.txt). Also, I had to covert some fields to VARCHAR (AlbumDuration, AlbumReleaseDate, TrackReleaseDate & TrackDuration) as they were giving errors. Then I populated the table with csv data like this:
    
-      `code`
-      COPY deezer_table 
-      FROM './extracted/deezer_flat.csv' 
-      (AUTO_DETECT TRUE, HEADER TRUE);
-      `code`
+      `COPY deezer_table FROM './extracted/deezer_flat.csv'  (AUTO_DETECT TRUE, HEADER TRUE);`
 
-As I created a persistent databese, the longest step, which is populate the table with csv records has no longer to be done and access to database is just done by `code` .open FILENAME" `code` (FILENAME shall have an arbitrary extension, but .db or .duckdb are commonly used).
+As I created a persistent databese, the longest step, which is populate the table with csv records has no longer to be done and access to database is just done by `.open FILENAME"` (FILENAME shall have an arbitrary extension, but .db or .duckdb are commonly used).
 
 3. Built interactive dashboards with **[Streamlit](https://streamlit.io/)** to explore:
    - Artists and their fan counts  
    - Album releases over time  
    - Track-level details like duration, rank, BPM, and explicitness
 
-   Streamlit app on a browser can be easily executed by `code` streamlit run FILENAME.py `code`
+   Streamlit app on a browser can be easily executed by `streamlit run FILENAME.py`
 
 ## Some Insights
 - Which artists have the most albums or fans  
