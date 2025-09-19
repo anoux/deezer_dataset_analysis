@@ -13,17 +13,29 @@ kpi = con.execute("""
         COUNT(DISTINCT ArtistId) AS artists,
         COUNT(DISTINCT AlbumId) AS albums,
         COUNT(DISTINCT TrackTitle) AS tracks, 
-        AVG(
-            EXTRACT(EPOCH FROM strptime(TrackDuration, '%H:%M:%S'))
-        ) AS avg_duration_seconds
+        AVG(TrackDurationSeconds) AS avg_duration_seconds
     FROM deezer_table
     WHERE TrackDuration IS NOT NULL;
 """).df().iloc[0]
 
-st.metric("Artists", kpi["artists"])
-st.metric("Albums", kpi["albums"])
-st.metric("Tracks", kpi["tracks"])
-st.metric("Avg Track Duration (s)", round(kpi["avg_duration"], 2))
+# commas as separators
+artists_fmt = f"{kpi['artists']:,.0f}"
+albums_fmt = f"{kpi['albums']:,.0f}"
+tracks_fmt = f"{kpi['tracks']:,.0f}"
+avg_duration_fmt = f"{kpi['avg_duration_seconds']:,.2f}"
+
+avg_secs = kpi['avg_duration_seconds']
+
+# convert to minutes + seconds
+minutes = int(avg_secs // 60)
+seconds = int(avg_secs % 60)
+avg_duration_fmt = f"{minutes}:{seconds:02d}"
+
+# Streamlit metrics
+st.metric("Artists", artists_fmt)
+st.metric("Albums", albums_fmt)
+st.metric("Tracks", tracks_fmt)
+st.metric("Avg Track Duration (s)", avg_duration_fmt)
 
 # Tabs
 tab1, tab2, tab3 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎵 Tracks"])
@@ -45,6 +57,8 @@ with tab2:
         SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
         FROM deezer_table
         WHERE AlbumReleaseDate IS NOT NULL
+          AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'  -- ensure it's a 4-digit year
+          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2030
         GROUP BY year
         ORDER BY year
     """).df()
