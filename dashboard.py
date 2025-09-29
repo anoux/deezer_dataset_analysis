@@ -80,13 +80,41 @@ with tab1:
     st.altair_chart(albums_chart, use_container_width=True)
 
 with tab2:
-    st.subheader("Albums Released per Year")
+    
+    # 1800-2028 period
+    st.subheader("Albums Released per Year - 1800-2028 period")
     album = con.execute("""
         SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
         FROM deezer_table
         WHERE AlbumReleaseDate IS NOT NULL
           AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
           AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2030
+        GROUP BY year
+        ORDER BY year
+    """).df()
+    st.line_chart(album.set_index("year"))
+
+    #1800-2000 period
+    st.subheader("Albums Released per Year - 1800-2000 period")
+    album = con.execute("""
+        SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
+        FROM deezer_table
+        WHERE AlbumReleaseDate IS NOT NULL
+          AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
+          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2000
+        GROUP BY year
+        ORDER BY year
+    """).df()
+    st.line_chart(album.set_index("year"))
+
+     #1800-1960 period
+    st.subheader("Albums Released per Year - 1800-1960 period")
+    album = con.execute("""
+        SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
+        FROM deezer_table
+        WHERE AlbumReleaseDate IS NOT NULL
+          AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
+          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 1960
         GROUP BY year
         ORDER BY year
     """).df()

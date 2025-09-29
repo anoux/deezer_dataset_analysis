@@ -22,7 +22,7 @@ As I created a persistent databese, the longest step, which is populate the tabl
 
 ## Some Insights
 - Top 20 artists as per albums & fans  
-- Albums release per year  
+- Albums release per year since the 1800 year
 - Track popularity across Top 20 artists as per Track Rank
 - Albums distribution across genre
 
