@@ -21,8 +21,9 @@ As I created a persistent databese, the longest step, which is populate the tabl
    Streamlit app on a browser can be easily executed by `streamlit run FILENAME.py`
 
 ## Some Insights
-- Which artists have the most albums or fans  
-- How album releases are distributed by year  
-- How track durations vary across the dataset  
-- A quick look at track "energy" via BPM and gain
+- Top 20 artists as per albums & fans  
+- Albums release per year  
+- Track popularity across Top 20 artists as per Track Rank
+- Albums distribution across genre
+
 
