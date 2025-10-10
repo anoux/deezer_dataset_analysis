@@ -94,27 +94,14 @@ with tab2:
     """).df()
     st.line_chart(album.set_index("year"))
 
-    #1800-2000 period
-    st.subheader("Albums Released per Year - 1800-2000 period")
+    #1950-2000 period
+    st.subheader("Albums Released per Year - 1950-2000 period")
     album = con.execute("""
         SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
         FROM deezer_table
         WHERE AlbumReleaseDate IS NOT NULL
           AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
-          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2000
-        GROUP BY year
-        ORDER BY year
-    """).df()
-    st.line_chart(album.set_index("year"))
-
-     #1800-1960 period
-    st.subheader("Albums Released per Year - 1800-1960 period")
-    album = con.execute("""
-        SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
-        FROM deezer_table
-        WHERE AlbumReleaseDate IS NOT NULL
-          AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
-          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 1960
+          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1950 AND 2000
         GROUP BY year
         ORDER BY year
     """).df()
