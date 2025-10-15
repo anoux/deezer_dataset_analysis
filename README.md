@@ -39,3 +39,29 @@ Streamlit app on a browser can be easily executed by `streamlit run FILENAME.py`
 ### 🎵 Genres Tab
 - **Genres Distribution**  
   Shows how many albums belong to each music genre, sorted from most to least represented.
+
+## Rock and Disco analysis
+
+I creates an additional table to so more research within rock and disco tracks
+
+```sql
+CREATE TABLE rock_and_disco AS
+· SELECT
+· NULLIF(SUBSTRING(AlbumReleaseDate,1,4), '') AS year_str,
+·   CASE
+·     WHEN AlbumGenreName ILIKE '%rock%' THEN 'rock'
+·     WHEN AlbumGenreName ILIKE '%disco%' THEN 'disco'
+·     ELSE 'other'
+·   END AS genre_norm,
+·   COUNT(*) AS n_albums,
+·   AVG(CASE WHEN TrackDurationSeconds IS NOT NULL THEN TrackDurationSeconds END) AS avg_track_seconds,
+·   AVG(CASE WHEN TrackBPM IS NOT NULL THEN TrackBPM END) AS avg_bpm,
+·   AVG(CASE WHEN TrackRank IS NOT NULL THEN TrackRank END) AS avg_rank,
+·   COUNT(DISTINCT ArtistId) AS n_artists
+· FROM deezer_table
+· WHERE AlbumGenreName IS NOT NULL
+·   AND AlbumGenreName != ''
+·   AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
+· GROUP BY year_str, genre_norm
+· HAVING year_str IS NOT NULL
+```
