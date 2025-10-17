@@ -42,9 +42,10 @@ Streamlit app on a browser can be easily executed by `streamlit run FILENAME.py`
 
 ## Rock and Disco analysis
 
-I creates an additional table to so more research within rock and disco tracks
+I created an additional table to so more research within rock and disco tracks. From initial 119,500,260 rows and after excluding those with odd AlbumReleaseDate data, only 299 records correspond to rock and disco, which looks like a too poor portion
 
 ```sql
+DROP TABLE IF EXISTS rock_and_disco;
 CREATE TABLE rock_and_disco AS
 · SELECT
 · NULLIF(SUBSTRING(AlbumReleaseDate,1,4), '') AS year_str,
@@ -61,7 +62,7 @@ CREATE TABLE rock_and_disco AS
 · FROM deezer_table
 · WHERE AlbumGenreName IS NOT NULL
 ·   AND AlbumGenreName != ''
-·   AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
+‣   AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2025
 · GROUP BY year_str, genre_norm
-· HAVING year_str IS NOT NULL
+· HAVING year_str IS NOT NULL;
 ```
