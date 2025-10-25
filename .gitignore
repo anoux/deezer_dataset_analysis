@@ -5,6 +5,7 @@
 *.csv
 *.db
 *.metadata
+*.
 
 # Ignore Python cache files
 __pycache__/

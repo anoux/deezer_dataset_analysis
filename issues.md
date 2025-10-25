@@ -2,7 +2,7 @@
 
 ## Music from Beyond & BC Music
 
-I found out that for some rows, AlbumReleaseDate field is totally wrong, showing inexistent years. ![Here is an example](image.png).
+I found out that for some rows, AlbumReleaseDate field is totally wrong, showing inexistent years. ![Here is an example](image.png)
 I first believed this happened when I created uploaded all data into an empty table on duckdb where datatypes were already defined, but had to convert some fields to varchar datatype.
 I found out also that by doing the below, same error is still there
 ```sql
