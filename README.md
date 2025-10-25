@@ -42,7 +42,7 @@ Streamlit app on a browser can be easily executed by `streamlit run FILENAME.py`
 
 ## Rock and Disco analysis
 
-I created an additional table to so more research within rock and disco tracks. From initial 119,500,260 rows and after excluding those with odd AlbumReleaseDate data, only 299 records correspond to rock and disco, which looks like a too poor portion
+I created an additional table to do more research within rock and disco tracks. From initial 119,500,260 rows and after excluding those with odd AlbumReleaseDate values, only 299 records compliant with conditions in the query below correspond to rock and disco, a minor fraction.
 
 ```sql
 DROP TABLE IF EXISTS rock_and_disco;
