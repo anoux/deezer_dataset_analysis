@@ -42,9 +42,9 @@ Streamlit app on a browser can be easily executed by `streamlit run FILENAME.py`
 
 ## Rock and Disco analysis
 
-I created an additional table to do more research within rock and disco tracks. From initial 119,500,260 rows and after excluding those with odd AlbumReleaseDate values, 
+I created an additional table to do more research within rock and disco tracks. From initial 119,500,260 rows and after excluding those with odd AlbumReleaseDate values, 3884445 belong to rock and 48895 to disco.
 
-By aggregating records by genre_norm, an output of 299 records is obtained.
+By aggregating records as below, i.e. by genre_norm (rock, disco, other) an output of 299 records is obtained.
 
 ```sql
 DROP TABLE IF EXISTS rock_and_disco;

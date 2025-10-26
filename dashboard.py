@@ -1,6 +1,7 @@
 import duckdb
 import streamlit as st
 import altair as alt
+import pandas as pd
 
 # Connect to DuckDB
 con = duckdb.connect("deezer.db")
@@ -38,7 +39,7 @@ st.metric("Tracks", tracks_fmt)
 st.metric("Avg Track Duration", avg_duration_fmt)
 
 # Tabs
-tab1, tab2, tab3, tab4 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎼 Tracks", "🎵 Genres"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎼 Tracks", "🎵 Genres", "🎸 Rock & Disco 🪩"])
 
 with tab1:
 
@@ -146,3 +147,73 @@ with tab4:
     ).properties(width=700, height=400)
 
     st.altair_chart(album_chart, use_container_width=True)
+
+with tab5:
+    st. subheader("Rock & Disco")
+    rd_albums = con.execute("""
+        SELECT CAST(year_str AS INT) AS year, genre_norm, SUM(n_albums) AS albums
+        FROM rock_and_disco
+        WHERE genre_norm IN ('rock','disco')
+        AND CAST(year_str AS INT) BETWEEN 1980 AND 2025
+        GROUP BY year, genre_norm
+        ORDER BY year
+    """).df()
+    
+    rd_chart = alt.Chart(rd_albums).mark_bar().encode(
+        x=alt.X("year:N", sort="-y", title="Year"),
+        y=alt.Y("albums:Q", title="Albums"),
+        color=alt.Color("genre_norm:N", title="Genre")
+    ).properties(width=700, height=400)
+    
+    st.altair_chart(rd_chart, use_container_width=True)
+    
+    st.subheader("BPM, duration & popularity")
+    comp = con.execute("""
+        SELECT CAST(year_str AS INT) AS year, genre_norm,
+        AVG(avg_bpm) AS avg_bpm,
+        AVG(avg_track_seconds) AS avg_seconds,
+        AVG(avg_rank) AS avg_rank
+        FROM rock_and_disco
+        WHERE genre_norm IN ('rock','disco')
+        GROUP BY year, genre_norm
+        ORDER BY year                   
+    """).df()
+
+    comp_melted = comp.melt(
+    id_vars=["year", "genre_norm"],
+    value_vars=["avg_bpm", "avg_seconds", "avg_rank"],
+    var_name="feature",
+    value_name="value"
+    )
+
+    y_scales = {
+    "avg_bpm": [0, 100],
+    "avg_seconds": [0, 500],
+    "avg_rank": [0, 350000]
+}
+
+charts = []
+
+for feature, ydomain in y_scales.items():
+    subset = comp_melted[comp_melted["feature"] == feature]
+
+    chart = (
+        alt.Chart(subset)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("year:O", title="Year"),
+            y=alt.Y(
+                "value:Q",
+                title=feature.replace("avg_", "").replace("_", " ").title(),
+                scale=alt.Scale(domain=ydomain)  # 👈 custom Y-axis
+            ),
+            color=alt.Color("genre_norm:N", title="Genre"),
+        )
+        .properties(width=700, height=200, title=f"{feature.title()} over Time")
+    )
+
+    charts.append(chart)
+
+# Combine vertically
+final_chart = alt.vconcat(*charts)
+st.altair_chart(final_chart, use_container_width=True)
