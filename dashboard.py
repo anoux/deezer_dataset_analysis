@@ -8,13 +8,20 @@ con = duckdb.connect("deezer.db")
 
 st.title("🎶 Deezer Music Dashboard")
 
-# KPI
+st.markdown("### Some high-level KPIs")
+
+col1, col2 = st.columns(2)
+
+# KPIs
 kpi = con.execute("""
     SELECT 
         COUNT(DISTINCT ArtistId) AS artists,
         COUNT(DISTINCT AlbumId) AS albums,
-        COUNT(DISTINCT TrackTitle) AS tracks, 
-        AVG(TrackDurationSeconds) AS avg_duration_seconds
+        COUNT(DISTINCT TrackTitle) AS tracks,
+        COUNT(DISTINCT AlbumGenreName) AS genres,
+        AVG(TrackDurationSeconds) AS avg_duration_seconds,
+        AVG(albums/artists) AS albums_per_artist,
+        AVG(tracks/albums) AS tracks_per_album        
     FROM deezer_table
     WHERE TrackDuration IS NOT NULL;
 """).df().iloc[0]
@@ -32,11 +39,20 @@ minutes = int(avg_secs // 60)
 seconds = int(avg_secs % 60)
 avg_duration_fmt = f"{minutes}:{seconds:02d}"
 
-# Streamlit metrics
-st.metric("Artists", artists_fmt)
-st.metric("Albums", albums_fmt)
-st.metric("Tracks", tracks_fmt)
-st.metric("Avg Track Duration", avg_duration_fmt)
+with col1:
+
+    # Streamlit metrics
+    st.metric("No. Artists", artists_fmt)
+    st.metric("No. Albums", albums_fmt)
+    st.metric("No. Tracks", tracks_fmt)
+    st.metric("Avg Track Duration", avg_duration_fmt)
+
+with col2:
+    
+    st.metric("No. Albums per Artist", f"{(kpi['albums'] / kpi['artists']):.2f}")
+    st.metric("No. Tracks per Album", f"{(kpi['tracks'] / kpi['albums']):.2f}")
+    st.metric("No. Genres", f"{(kpi['genres']):.2f}")
+
 
 # Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎼 Tracks", "🎵 Genres", "🎸 Rock & Disco 🪩"])
