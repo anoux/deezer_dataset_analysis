@@ -6,54 +6,74 @@ import pandas as pd
 # Connect to DuckDB
 con = duckdb.connect("deezer.db")
 
-st.title("🎶 Deezer Music Dashboard")
+st.title("Deezer Music Dashboard 🎶")
 
 st.markdown("### Some high-level KPIs")
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 # KPIs
 kpi = con.execute("""
     SELECT 
+        COUNT(DISTINCT AlbumGenreName) AS genres,
         COUNT(DISTINCT ArtistId) AS artists,
         COUNT(DISTINCT AlbumId) AS albums,
         COUNT(DISTINCT TrackTitle) AS tracks,
-        COUNT(DISTINCT AlbumGenreName) AS genres,
         AVG(TrackDurationSeconds) AS avg_duration_seconds,
-        AVG(albums/artists) AS albums_per_artist,
-        AVG(tracks/albums) AS tracks_per_album        
+        AVG(COUNT(DISTINCT(AlbumGenreName))) AS avg_genres,
+        AVG(COUNT(DISTINCT(ArtistId))) AS avg_artists,
+        AVG(COUNT(DISTINCT(AlbumId))) AS avg_albums,
+        AVG(COUNT(DISTINCT(TrackTitle))) AS avg_tracks,      
     FROM deezer_table
     WHERE TrackDuration IS NOT NULL;
 """).df().iloc[0]
 
 # commas as separators
+genres_fmt = f"{kpi['genres']:,.0f}"
 artists_fmt = f"{kpi['artists']:,.0f}"
 albums_fmt = f"{kpi['albums']:,.0f}"
 tracks_fmt = f"{kpi['tracks']:,.0f}"
+avg_genres_fmt = f"{kpi['avg_genres']:,.0f}"
+avg_artists_fmt = f"{kpi['avg_artists']:,.0f}"
+avg_albums_fmt = f"{kpi['avg_albums']:,.0f}"
+avg_tracks_fmt = f"{kpi['avg_tracks']:,.0f}"
+
+# ratios with 2 decimal places
+
+genre_per_album_fmt = f"{(kpi['artists'] / kpi['genres']):.2f}"
+album_per_artist_fmt = f"{(kpi['albums'] / kpi['artists']):.2f}"
+track_per_album_fmt = f"{(kpi['tracks'] / kpi['albums']):.2f}"
 avg_duration_fmt = f"{kpi['avg_duration_seconds']:,.2f}"
 
-avg_secs = kpi['avg_duration_seconds']
-
 # convert to minutes + seconds
+avg_secs = kpi['avg_duration_seconds']
 minutes = int(avg_secs // 60)
 seconds = int(avg_secs % 60)
 avg_duration_fmt = f"{minutes}:{seconds:02d}"
 
-with col1:
 
-    # Streamlit metrics
+# Streamlit metrics
+
+with col1:
+    
+    st.metric("No. Genres", genres_fmt)
     st.metric("No. Artists", artists_fmt)
     st.metric("No. Albums", albums_fmt)
     st.metric("No. Tracks", tracks_fmt)
-    st.metric("Avg Track Duration", avg_duration_fmt)
 
 with col2:
     
-    st.metric("No. Albums per Artist", f"{(kpi['albums'] / kpi['artists']):.2f}")
-    st.metric("No. Tracks per Album", f"{(kpi['tracks'] / kpi['albums']):.2f}")
-    st.metric("No. Genres", f"{(kpi['genres']):.2f}")
-
-
+    st.metric("No. Artists per Genre", genre_per_album_fmt)
+    st.metric("No. Albums per Artist", album_per_artist_fmt)
+    st.metric("No. Tracks per Album", track_per_album_fmt)
+    st.metric("Avg Track Duration", avg_duration_fmt)
+    
+with col3:
+    st.metric("Avg Genres", avg_genres_fmt)
+    st.metric("Avg Artists", avg_artists_fmt)
+    st.metric("Avg Albums", avg_albums_fmt)
+    st.metric("Avg Tracks", avg_tracks_fmt)
+    
 # Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎼 Tracks", "🎵 Genres", "🎸 Rock & Disco 🪩"])
 
