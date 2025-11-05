@@ -12,20 +12,53 @@ st.markdown("### Some high-level KPIs")
 
 col1, col2, col3 = st.columns(3)
 
-# KPIs
+# KPIs part 1 - counts
 kpi = con.execute("""
     SELECT 
         COUNT(DISTINCT AlbumGenreName) AS genres,
         COUNT(DISTINCT ArtistId) AS artists,
         COUNT(DISTINCT AlbumId) AS albums,
         COUNT(DISTINCT TrackTitle) AS tracks,
-        AVG(TrackDurationSeconds) AS avg_duration_seconds,
-        AVG(COUNT(DISTINCT(AlbumGenreName))) AS avg_genres,
-        AVG(COUNT(DISTINCT(ArtistId))) AS avg_artists,
-        AVG(COUNT(DISTINCT(AlbumId))) AS avg_albums,
-        AVG(COUNT(DISTINCT(TrackTitle))) AS avg_tracks,      
+        AVG(TrackDurationSeconds) AS avg_duration_seconds,      
     FROM deezer_table
     WHERE TrackDuration IS NOT NULL;
+""").df().iloc[0]
+
+# KPIs part 2 - averages
+kpi = con.execute("""
+    SELECT 
+    AVG(artist_count) AS avg_artist_per_genre
+FROM (
+    SELECT 
+        AlbumGenreName,
+        COUNT(DISTINCT ArtistId) AS artist_count
+    FROM deezer_table
+    GROUP BY AlbumGenreName
+) AS artist_genre_summary;
+""").df().iloc[0]
+
+kpi = con.execute("""
+    SELECT 
+    AVG(album_count) AS avg_album_per_artist
+FROM (
+    SELECT 
+        ArtistId,
+        COUNT(DISTINCT AlbumGenreName) AS album_count
+    FROM deezer_table
+    GROUP BY ArtistId
+) AS album_artist_summary;
+""").df().iloc[0]
+
+kpi = con.execute("""
+    SELECT 
+    AVG(track_count) AS avg_track_per_album
+FROM (
+    SELECT 
+        AlbumId,
+        COUNT(DISTINCT TrackTitle) AS track_count
+    FROM deezer_table
+    GROUP BY AlbumID
+) AS track_album_summary;
 """).df().iloc[0]
 
 # commas as separators
@@ -33,10 +66,10 @@ genres_fmt = f"{kpi['genres']:,.0f}"
 artists_fmt = f"{kpi['artists']:,.0f}"
 albums_fmt = f"{kpi['albums']:,.0f}"
 tracks_fmt = f"{kpi['tracks']:,.0f}"
-avg_genres_fmt = f"{kpi['avg_genres']:,.0f}"
-avg_artists_fmt = f"{kpi['avg_artists']:,.0f}"
-avg_albums_fmt = f"{kpi['avg_albums']:,.0f}"
-avg_tracks_fmt = f"{kpi['avg_tracks']:,.0f}"
+avg_genres_fmt = f"{kpi['avg_artist_per_genre']:,.0f}"
+avg_artists_fmt = f"{kpi['avg_album_per_artist']:,.0f}"
+avg_albums_fmt = f"{kpi['avg_track_per_album']:,.0f}"
+avg_tracks_fmt = f"{kpi['avg_artist_per_genre']:,.0f}"
 
 # ratios with 2 decimal places
 
@@ -50,7 +83,6 @@ avg_secs = kpi['avg_duration_seconds']
 minutes = int(avg_secs // 60)
 seconds = int(avg_secs % 60)
 avg_duration_fmt = f"{minutes}:{seconds:02d}"
-
 
 # Streamlit metrics
 
