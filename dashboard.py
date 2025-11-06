@@ -12,8 +12,8 @@ st.markdown("### Some high-level KPIs")
 
 col1, col2, col3 = st.columns(3)
 
-# KPIs part 1 - counts
-kpi = con.execute("""
+# KPIs
+kpi_counts = con.execute("""
     SELECT 
         COUNT(DISTINCT AlbumGenreName) AS genres,
         COUNT(DISTINCT ArtistId) AS artists,
@@ -25,7 +25,7 @@ kpi = con.execute("""
 """).df().iloc[0]
 
 # KPIs part 2 - averages
-kpi = con.execute("""
+kpi_avg_1 = con.execute("""
     SELECT 
     AVG(artist_count) AS avg_artist_per_genre
 FROM (
@@ -37,7 +37,7 @@ FROM (
 ) AS artist_genre_summary;
 """).df().iloc[0]
 
-kpi = con.execute("""
+kpi_avg_2 = con.execute("""
     SELECT 
     AVG(album_count) AS avg_album_per_artist
 FROM (
@@ -49,7 +49,7 @@ FROM (
 ) AS album_artist_summary;
 """).df().iloc[0]
 
-kpi = con.execute("""
+kpi_avg_3 = con.execute("""
     SELECT 
     AVG(track_count) AS avg_track_per_album
 FROM (
@@ -61,25 +61,41 @@ FROM (
 ) AS track_album_summary;
 """).df().iloc[0]
 
-# commas as separators
-genres_fmt = f"{kpi['genres']:,.0f}"
-artists_fmt = f"{kpi['artists']:,.0f}"
-albums_fmt = f"{kpi['albums']:,.0f}"
-tracks_fmt = f"{kpi['tracks']:,.0f}"
-avg_genres_fmt = f"{kpi['avg_artist_per_genre']:,.0f}"
-avg_artists_fmt = f"{kpi['avg_album_per_artist']:,.0f}"
-avg_albums_fmt = f"{kpi['avg_track_per_album']:,.0f}"
-avg_tracks_fmt = f"{kpi['avg_artist_per_genre']:,.0f}"
+# --- Format helpers ---
+def fmt_int(value):
+    """Format integer KPIs with comma separators (e.g., 1,234)."""
+    return f"{value:,.0f}"
 
-# ratios with 2 decimal places
+def fmt_float(value, decimals=2):
+    """Format float KPIs with comma separators and decimals (e.g., 1,234.56)."""
+    return f"{value:,.{decimals}f}"
 
-genre_per_album_fmt = f"{(kpi['artists'] / kpi['genres']):.2f}"
-album_per_artist_fmt = f"{(kpi['albums'] / kpi['artists']):.2f}"
-track_per_album_fmt = f"{(kpi['tracks'] / kpi['albums']):.2f}"
-avg_duration_fmt = f"{kpi['avg_duration_seconds']:,.2f}"
+# --- Basic counts ---
+genres_fmt  = fmt_int(kpi_counts['genres'])
+artists_fmt = fmt_int(kpi_counts['artists'])
+albums_fmt  = fmt_int(kpi_counts['albums'])
+tracks_fmt  = fmt_int(kpi_counts['tracks'])
+
+# --- Ratios and averages ---
+artist_per_genre = kpi_counts['artists'] / kpi_counts['genres']
+album_per_artist = kpi_counts['albums'] / kpi_counts['artists']
+track_per_album  = kpi_counts['tracks'] / kpi_counts['albums']
+
+genre_per_album_fmt       = fmt_float(artist_per_genre)
+album_per_artist_fmt      = fmt_float(album_per_artist)
+track_per_album_fmt       = fmt_float(track_per_album)
+avg_artist_per_genre_fmt  = fmt_float(kpi_avg_1['avg_artist_per_genre'])
+avg_album_per_artist_fmt  = fmt_float(kpi_avg_2['avg_album_per_artist'])
+avg_track_per_album_fmt   = fmt_float(kpi_avg_3['avg_track_per_album'])
+
+# --- Average track duration (convert seconds to mm:ss) ---
+avg_secs = kpi_counts['avg_duration_seconds']
+minutes, seconds = divmod(int(avg_secs), 60)
+avg_duration_fmt = f"{minutes}:{seconds:02d}"
+
 
 # convert to minutes + seconds
-avg_secs = kpi['avg_duration_seconds']
+avg_secs = kpi_counts['avg_duration_seconds']
 minutes = int(avg_secs // 60)
 seconds = int(avg_secs % 60)
 avg_duration_fmt = f"{minutes}:{seconds:02d}"
@@ -95,16 +111,16 @@ with col1:
 
 with col2:
     
-    st.metric("No. Artists per Genre", genre_per_album_fmt)
-    st.metric("No. Albums per Artist", album_per_artist_fmt)
-    st.metric("No. Tracks per Album", track_per_album_fmt)
-    st.metric("Avg Track Duration", avg_duration_fmt)
+    st.metric("No. Artists/Genre", genre_per_album_fmt)
+    st.metric("No. Albums/Artist", album_per_artist_fmt)
+    st.metric("No. Tracks/Album", track_per_album_fmt)
+    
     
 with col3:
-    st.metric("Avg Genres", avg_genres_fmt)
-    st.metric("Avg Artists", avg_artists_fmt)
-    st.metric("Avg Albums", avg_albums_fmt)
-    st.metric("Avg Tracks", avg_tracks_fmt)
+    st.metric("Avg Artists per Genre", avg_artist_per_genre_fmt)
+    st.metric("Avg Albums per Artist", avg_album_per_artist_fmt)
+    st.metric("Avg Tracks per Album", avg_track_per_album_fmt)
+    st.metric("Avg Track Duration", avg_duration_fmt)
     
 # Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎼 Tracks", "🎵 Genres", "🎸 Rock & Disco 🪩"])
