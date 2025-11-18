@@ -127,58 +127,79 @@ tab1, tab2, tab3, tab4 = st.tabs(["👨‍🎤 Artists", "💿 Albums", "🎼 Tr
 
 with tab1:
 
-    st.subheader("Top 10 Artists by No. Fans — by Musical Era")
+    st.subheader("Top 10 Artists by No. Fans — Three periods")
 
-# --- Let user choose era ---
-period = st.radio(
-    "Select Period:",
-    ["Since 2000", "1980–1999", "1950–1979"],
-    horizontal=True
-)
+col1, col2, col3 = st.columns(3)
 
-# --- Build SQL WHERE clause dynamically ---
-if period == "Since 2000":
-    date_filter = "AlbumReleaseDate >= '2000-01-01'"
-elif period == "1980–1999":
-    date_filter = "AlbumReleaseDate BETWEEN '1980-01-01' AND '1999-12-31'"
-else:  # 1950–1979
-    date_filter = "AlbumReleaseDate BETWEEN '1950-01-01' AND '1979-12-31'"
-
-# --- Query top artists for selected era ---
-query = f"""
+#-- Top 10 artists during 1950-1979 ---
+top_1950_1979 = con.execute("""
     SELECT ArtistName, MAX(ArtistNbFan) AS fans
     FROM deezer_table
-    WHERE {date_filter}
+    WHERE AlbumReleaseDate BETWEEN '1950-01-01' AND '1979-12-31'
     GROUP BY ArtistName
     ORDER BY fans DESC
     LIMIT 10
-"""
-top_artists = con.execute(query).df()
+""").df()
 
-# --- Choose color dynamically based on period ---
-color_map = {
-    "Since 2000": "#1f77b4",    # blue
-    "1980–1999": "#ff7f0e",     # orange
-    "1950–1979": "#2ca02c"      # green
-}
-
-# --- Create chart ---
-chart = (
-    alt.Chart(top_artists)
-    .mark_bar()
-    .encode(
-        x=alt.X("ArtistName:N", sort="-y", title="Artist"),
-        y=alt.Y("fans:Q", title="No. Fans"),
-        color=alt.value(color_map[period])
-    )
-    .properties(
-        title=f"Top 10 Artists — {period}",
-        width=700,
-        height=400
-    )
+chart_1 = alt.Chart(top_1950_1979).mark_bar().encode(
+    x=alt.X("ArtistName:N", sort="-y", title=""),
+    y=alt.Y("fans:Q", title="No. Fans"),
+    color=alt.value("#1f77b4")
+).properties(
+    title="During 1950-1979",
+    width=350,
+    height=400
 )
 
-st.altair_chart(chart, use_container_width=True)
+# --- Top 10 artists during 1980-1999 ---
+top_1980_1999 = con.execute("""
+    SELECT ArtistName, MAX(ArtistNbFan) AS fans
+    FROM deezer_table
+    WHERE AlbumReleaseDate BETWEEN '1980-01-01' AND '1999-12-31'
+    GROUP BY ArtistName
+    ORDER BY fans DESC
+    LIMIT 10
+""").df()
+
+chart_2 = alt.Chart(top_1980_1999).mark_bar().encode(
+    x=alt.X("ArtistName:N", sort="-y", title=""),
+    y=alt.Y("fans:Q", title="No. Fans"),
+    color=alt.value("#188f22")
+).properties(
+    title="Before 2000",
+    width=350,
+    height=400
+)
+
+# --- Top 10 artists since 2000 ---
+top_since_2000 = con.execute("""
+    SELECT ArtistName, MAX(ArtistNbFan) AS fans
+    FROM deezer_table
+    WHERE AlbumReleaseDate >= '2000-01-01'
+    GROUP BY ArtistName
+    ORDER BY fans DESC
+    LIMIT 10
+""").df()
+
+chart_3 = alt.Chart(top_since_2000).mark_bar().encode(
+    x=alt.X("ArtistName:N", sort="-y", title=""),
+    y=alt.Y("fans:Q", title="No. Fans"),
+    color=alt.value("#ff7f0e")
+).properties(
+    title="Since 2000",
+    width=350,
+    height=400
+)
+
+# --- Display charts side by side ---
+with col1:
+    st.altair_chart(chart_1, use_container_width=True)
+
+with col2:
+    st.altair_chart(chart_2, use_container_width=True)
+
+with col3:
+    st.altair_chart(chart_3, use_container_width=True)
 
 
 with tab2:
@@ -210,8 +231,9 @@ with tab2:
     st.line_chart(album.set_index("year"))
 
 with tab3:
-    st.subheader("Top 20 artists - Track Popularity distribution")
-    artist_list = tuple(top_per_fans["ArtistName"].tolist())
+    st.subheader("Top 10 artists during 1950-1979 - Track Popularity distribution")
+    
+    artist_list = tuple(top_1950_1979["ArtistName"].tolist())
 
     track = f"""
         SELECT TrackRank, ArtistName
