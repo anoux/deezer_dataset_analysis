@@ -129,77 +129,77 @@ with tab1:
 
     st.subheader("Top 10 Artists by No. Fans — Three periods")
 
-col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-#-- Top 10 artists during 1950-1979 ---
-top_1950_1979 = con.execute("""
-    SELECT ArtistName, MAX(ArtistNbFan) AS fans
-    FROM deezer_table
-    WHERE AlbumReleaseDate BETWEEN '1950-01-01' AND '1979-12-31'
-    GROUP BY ArtistName
-    ORDER BY fans DESC
-    LIMIT 10
-""").df()
+    #-- Top 10 artists during 1950-1979 ---
+    top_1950_1979 = con.execute("""
+        SELECT ArtistName, MAX(ArtistNbFan) AS fans
+        FROM deezer_table
+        WHERE AlbumReleaseDate BETWEEN '1950-01-01' AND '1979-12-31'
+        GROUP BY ArtistName
+        ORDER BY fans DESC
+        LIMIT 10
+    """).df()
 
-chart_1 = alt.Chart(top_1950_1979).mark_bar().encode(
-    x=alt.X("ArtistName:N", sort="-y", title=""),
-    y=alt.Y("fans:Q", title="No. Fans"),
-    color=alt.value("#1f77b4")
-).properties(
-    title="During 1950-1979",
-    width=350,
-    height=400
-)
+    chart_1 = alt.Chart(top_1950_1979).mark_bar().encode(
+        x=alt.X("ArtistName:N", sort="-y", title=""),
+        y=alt.Y("fans:Q", title="No. Fans"),
+        color=alt.value("#1f77b4")
+    ).properties(
+        title="During 1950-1979",
+        width=350,
+        height=400
+    )
 
-# --- Top 10 artists during 1980-1999 ---
-top_1980_1999 = con.execute("""
-    SELECT ArtistName, MAX(ArtistNbFan) AS fans
-    FROM deezer_table
-    WHERE AlbumReleaseDate BETWEEN '1980-01-01' AND '1999-12-31'
-    GROUP BY ArtistName
-    ORDER BY fans DESC
-    LIMIT 10
-""").df()
+    # --- Top 10 artists during 1980-1999 ---
+    top_1980_1999 = con.execute("""
+        SELECT ArtistName, MAX(ArtistNbFan) AS fans
+        FROM deezer_table
+        WHERE AlbumReleaseDate BETWEEN '1980-01-01' AND '1999-12-31'
+        GROUP BY ArtistName
+        ORDER BY fans DESC
+        LIMIT 10
+    """).df()
 
-chart_2 = alt.Chart(top_1980_1999).mark_bar().encode(
-    x=alt.X("ArtistName:N", sort="-y", title=""),
-    y=alt.Y("fans:Q", title="No. Fans"),
-    color=alt.value("#188f22")
-).properties(
-    title="Before 2000",
-    width=350,
-    height=400
-)
+    chart_2 = alt.Chart(top_1980_1999).mark_bar().encode(
+        x=alt.X("ArtistName:N", sort="-y", title=""),
+        y=alt.Y("fans:Q", title="No. Fans"),
+        color=alt.value("#188f22")
+    ).properties(
+        title="During 1980-1999",
+        width=350,
+        height=400
+    )
 
-# --- Top 10 artists since 2000 ---
-top_since_2000 = con.execute("""
-    SELECT ArtistName, MAX(ArtistNbFan) AS fans
-    FROM deezer_table
-    WHERE AlbumReleaseDate >= '2000-01-01'
-    GROUP BY ArtistName
-    ORDER BY fans DESC
-    LIMIT 10
-""").df()
+    # --- Top 10 artists form 2000 onward---
+    top_since_2000 = con.execute("""
+        SELECT ArtistName, MAX(ArtistNbFan) AS fans
+        FROM deezer_table
+        WHERE AlbumReleaseDate >= '2000-01-01'
+        GROUP BY ArtistName
+        ORDER BY fans DESC
+        LIMIT 10
+    """).df()
 
-chart_3 = alt.Chart(top_since_2000).mark_bar().encode(
-    x=alt.X("ArtistName:N", sort="-y", title=""),
-    y=alt.Y("fans:Q", title="No. Fans"),
-    color=alt.value("#ff7f0e")
-).properties(
-    title="Since 2000",
-    width=350,
-    height=400
-)
+    chart_3 = alt.Chart(top_since_2000).mark_bar().encode(
+        x=alt.X("ArtistName:N", sort="-y", title=""),
+        y=alt.Y("fans:Q", title="No. Fans"),
+        color=alt.value("#ff7f0e")
+    ).properties(
+        title="From 2000 onward",
+        width=350,
+        height=400
+    )
 
-# --- Display charts side by side ---
-with col1:
-    st.altair_chart(chart_1, use_container_width=True)
+    # --- Display charts side by side ---
+    with col1:
+        st.altair_chart(chart_1, use_container_width=True)
 
-with col2:
-    st.altair_chart(chart_2, use_container_width=True)
+    with col2:
+        st.altair_chart(chart_2, use_container_width=True)
 
-with col3:
-    st.altair_chart(chart_3, use_container_width=True)
+    with col3:
+        st.altair_chart(chart_3, use_container_width=True)
 
 
 with tab2:
