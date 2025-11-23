@@ -204,31 +204,64 @@ with tab1:
 
 with tab2:
     
-    # 1800-2028 period
-    st.subheader("Albums Released per Year - 1800-2028 period")
-    album = con.execute("""
-        SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
-        FROM deezer_table
-        WHERE AlbumReleaseDate IS NOT NULL
-          AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
-          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2030
-        GROUP BY year
-        ORDER BY year
-    """).df()
-    st.line_chart(album.set_index("year"))
+    # 1800-2025 period - albums and artists per year
 
-    #1950-2000 period
-    st.subheader("Albums Released per Year - 1950-2000 period")
-    album = con.execute("""
-        SELECT SUBSTRING(AlbumReleaseDate,1,4) AS year, COUNT(*) as album_count
+    st.subheader("Artists & Albums per Year – 1800–2025")
+
+    df = con.execute("""
+        SELECT
+            SUBSTRING(AlbumReleaseDate,1,4) AS year,
+            COUNT(DISTINCT ArtistId) AS artist_count,
+            COUNT(DISTINCT AlbumId) AS album_count
         FROM deezer_table
         WHERE AlbumReleaseDate IS NOT NULL
-          AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
-          AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1950 AND 2000
+        AND SUBSTRING(AlbumReleaseDate,1,4) ~ '^[0-9]{4}$'
+        AND CAST(SUBSTRING(AlbumReleaseDate,1,4) AS INT) BETWEEN 1800 AND 2025
         GROUP BY year
         ORDER BY year
     """).df()
-    st.line_chart(album.set_index("year"))
+
+    # reshape for altair long format
+    df_long = df.melt(
+        id_vars="year",
+        value_vars=["artist_count", "album_count"],
+        var_name="metric",
+        value_name="count"
+    )
+
+    # pretty names
+    df_long["metric"] = df_long["metric"].map({
+        "artist_count": "Artists",
+        "album_count": "Albums"
+    })
+
+    chart = alt.Chart(df_long).mark_line().encode(
+        x=alt.X(
+            "year:O",                # treat years as ordered categories
+            title="Year",
+            axis=alt.Axis(
+                labelAngle=-90,
+                labelOverlap="parity",
+                format="d",
+                tickCount=20          # adjust density of labels
+            ),
+            sort="ascending"
+        ),
+        y=alt.Y("count:Q", title="Count"),
+        color=alt.Color(
+            "metric:N",
+            title="Metric",
+            scale=alt.Scale(scheme="category10")
+        )
+    ).properties(
+        width=900,
+        height=450,
+        title="Number of Artists & Albums per Year (1800–2025)"
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+
 
 with tab3:
     st.subheader("Top 10 artists during 1950-1979 - Track Popularity distribution")
@@ -253,7 +286,7 @@ with tab3:
     st.altair_chart(artist_chart, use_container_width=True)
 
 with tab4:
-    st. subheader("Genres Distribution")
+    st.subheader("Genres Distribution")
 
     album_genre = con.execute("""
         SELECT AlbumGenreName, COUNT(*) as genre_count
@@ -270,4 +303,39 @@ with tab4:
     ).properties(width=700, height=400)
 
     st.altair_chart(album_chart, use_container_width=True)
+
+    st.subheader("No. Albums for most popular Genres Over Time (1800–2025)")
+
+    selected_genres = (
+    'pop', 'rap/hiphop', 'electro', 'klassiek',
+    'jazz', 'alternative', 'rock', 'disco'
+    )
+
+    genre_time = con.execute(f"""
+        SELECT 
+            CAST(SUBSTRING(AlbumReleaseDate, 1, 4) AS INT) AS year,
+            LOWER(AlbumGenreName) AS genre,
+            COUNT(*) AS album_count
+        FROM deezer_table
+        WHERE AlbumReleaseDate IS NOT NULL
+          AND AlbumGenreName IS NOT NULL
+          AND AlbumGenreName != ''
+          AND AlbumGenreName IN {selected_genres}
+          AND SUBSTRING(AlbumReleaseDate, 1, 4) ~ '^[0-9]{4}$'
+          AND CAST(SUBSTRING(AlbumReleaseDate, 1, 4) AS INT) BETWEEN 1800 AND 2025
+        GROUP BY year, genre
+        ORDER BY year, genre
+    """).df()
+
+    genre_chart = alt.Chart(genre_time).mark_line().encode(
+        x=alt.X("year:O", title="Year"),
+        y=alt.Y("album_count:Q", title="Albums Released"),
+        color=alt.Color("genre:N", title="Genre")
+    ).properties(
+        width=800,
+        height=450,
+        title="Albums per Genre per Year (1800–2025)"
+    )
+
+    st.altair_chart(genre_chart, use_container_width=True)
 
