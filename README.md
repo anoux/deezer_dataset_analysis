@@ -49,6 +49,8 @@ The first section computes and displays aggregated metrics, including:
 - Average track duration
 - Additional industry-level averages computed using nested SQL queries
 
+<img width="643" height="402" alt="image" src="https://github.com/user-attachments/assets/bcb5c251-3a0c-4aad-ad13-cdb9256e58b1" />
+
 These KPIs give a quick overview of the structure and richness of the dataset.
 
 ## 👨‍🎤 Tab 1 — Artists
@@ -64,6 +66,8 @@ Top 10 artists by number of fans during:
 Each period is visualized using Altair bar charts.
 The dashboard also includes track popularity distribution (boxplots) for the top artists of the 1950–1979 period.
 
+<img width="746" height="399" alt="image" src="https://github.com/user-attachments/assets/7031cddc-bb60-4df1-a342-c6dd8259da36" />
+
 ## 💿 Tab 2 — Albums Over Time
 
 Two time-series analyses of album releases:
@@ -74,9 +78,13 @@ Two time-series analyses of album releases:
 
 This shows trends in music production volume across decades and the jump aroun the 2000s is truly amazing.
 
+<img width="731" height="397" alt="image" src="https://github.com/user-attachments/assets/8918e434-d8aa-4b3f-b35a-324d31be6d9f" />
+
 ## 🎼 Tab 3 — Track Popularity
 
 A distribution analysis of track rankings (0–400k range) for the top artists (1950–1979), using Altair boxplots to compare popularity variation across artists.
+
+<img width="724" height="472" alt="image" src="https://github.com/user-attachments/assets/8b12915b-e1ba-4a3b-bc23-b646cf711cdd" />
 
 ## 🎵 Tab 4 — Genre Distribution
 
@@ -85,5 +93,7 @@ A global breakdown of albums by genre, built with:
 Grouped SQL aggregations
 
 A category-sorted Altair bar chart
+
+<img width="735" height="442" alt="image" src="https://github.com/user-attachments/assets/1027bfe7-395c-4f26-b827-7cb0c402fdd3" />
 
 This provides insight into which genres dominate the catalogue.
