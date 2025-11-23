@@ -68,17 +68,13 @@ The dashboard also includes track popularity distribution (boxplots) for the top
 
 <img width="746" height="399" alt="image" src="https://github.com/user-attachments/assets/7031cddc-bb60-4df1-a342-c6dd8259da36" />
 
-## 💿 Tab 2 — Albums Over Time
+## 💿 Tab 2 — Albums & Artists Over Time
 
-Two time-series analyses of album releases:
+A time-series chart of album and artists counts:
 
-1800–2028 (complete timeline)
+This shows trends in music industry volume across decades and the jump aroun the 2000s is truly amazing.
 
-1950–2000 (focused modern-era analysis)
-
-This shows trends in music production volume across decades and the jump aroun the 2000s is truly amazing.
-
-<img width="731" height="397" alt="image" src="https://github.com/user-attachments/assets/8918e434-d8aa-4b3f-b35a-324d31be6d9f" />
+<img width="820" height="507" alt="image" src="https://github.com/user-attachments/assets/a7a90d3e-9dca-4b3b-bc6e-0369dd4a54ab" />
 
 ## 🎼 Tab 3 — Track Popularity
 
