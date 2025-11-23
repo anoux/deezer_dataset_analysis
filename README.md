@@ -8,10 +8,10 @@ This project is a self-directed data analysis and visualization app built to exp
 - Streamlit — interactive web app framework
 - Altair — declarative visualization library
 - Python — orchestration, data manipulation, and formatting
-
+![image](./charts/kpis.png)
 I analysed this **[Dataset](https://github.com/MusicMoveArr/Datasets)** I found on Github. I downloaded a torrent file that contains deezer music dataset and parsed it. I got a csv file (49 data fields, 119.5 million records, 70 gb size) and did my best to get insights from it.
 
-## Steps I went through
+### Steps I went through
 1. Parsed a **[torrent](https://github.com/MusicMoveArr/Datasets/blob/main/MusicBrainz%20Tidal%20Spotify%20Deezer%20Dataset%2006%20July%202025.torrent)** containing deezer music dataset and extracted deezer dataset into a CSV file.
 2. Due to csv size, used **[DuckDB](https://duckdb.org/)** right on the terminal to query and analyze the csv file with SQL:
    - First I created a database by `con = duckdb.connect("deezer.db")`. So, from the initial 70 gb csv file I got a 30 gb database feasible to work with.
