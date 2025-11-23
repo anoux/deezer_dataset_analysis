@@ -63,7 +63,7 @@ Top 10 artists by number of fans during:
 - 1980–1999 - Pop explosion & Electronic beginnings
 - 2000 onward - Genre fusion
 
-Each period is visualized using Altair bar charts.
+Each period is visualized using Altoir bar charts.
 The dashboard also includes track popularity distribution (boxplots) for the top artists of the 1950–1979 period.
 
 <img width="746" height="399" alt="image" src="https://github.com/user-attachments/assets/7031cddc-bb60-4df1-a342-c6dd8259da36" />
